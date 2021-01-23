@@ -31,8 +31,9 @@ ln -s ~/.vim/vimrc ~/.vimrc
 ```
 
 ### Features
-- Supported Languages: Python, Rust, Markdown, Terraform, VimScript
-- Dark / Light Theme follows system preference(macOS Only)
+- Plugins via [vim-plug](https://github.com/junegunn/vim-plug)
+- Supported Languages: Python, Rust, Markdown, Terraform, VimScript, CSS
+- Automatically switches between Dark / Light Theme based on System Preference(macOS Only)
 - Async Linting / Auto Completion / Auto Formatting via [ALE](https://github.com/dense-analysis/ale)
 - NerdTree + Git Support
 

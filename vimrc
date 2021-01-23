@@ -14,7 +14,6 @@
 "  limitations under the License.
 
 " Install vim-plug if it does not exist.
-
 if empty(glob('~/.vim/autoload/plug.vim'))
   silent !curl -fLo ~/.vim/autoload/plug.vim --create-dirs
     \ https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
@@ -110,8 +109,6 @@ if !isdirectory($HOME . '/.vim/_temp/')
   call mkdir($HOME . '/.vim/_temp/', 'p')
 endif
 set directory^=~/.vim/_temp//
-
-filetype plugin indent on
 
 " Saves when lost focus
 au FocusLost * silent! wall
@@ -214,9 +211,10 @@ set smartcase
 
 " Remember Last Cursor Position
 au BufReadPost * if &filetype !~ '^git\c' && line("'\"") > 0 && line("'\"") <= line("$")
-\| exe "normal! g`\"" | endif
+  \| exe "normal! g`\"" | endif
 
 " Colour Scheme
+" Switch to Light Theme
 function g:VimRcSwitchToLightScheme()
   try
     colorscheme onehalflight
@@ -230,6 +228,7 @@ function g:VimRcSwitchToLightScheme()
   call g:VimRcUpdateStatusLine()
 endfunction
 
+" Switch to Dark Theme
 function g:VimRcSwitchToDarkScheme()
   colorscheme onehalfdark
   set background=dark
@@ -258,6 +257,8 @@ call g:VimRcSwitchToLightScheme()
 " Dark Mode detection
 " To use this feature, you need to `brew install dark-mode`
 if executable("dark-mode")
+  " Checking every 0.5 seconds provides a relatively smooth transitioning
+  " experience between light and dark theme when system theme changes.
   let s:dark_mode_timer = timer_start(500, 'g:VimRcDetectDarkMode', {'repeat': -1})
   call g:VimRcDetectDarkMode(s:dark_mode_timer)
 endif
@@ -310,7 +311,7 @@ if has("gui_macvim") && has("gui_running")
 endif
 
 " Minimap
-" You need to brew install wfxr/code-minimap/code-minimap
+" You need to `brew install wfxr/code-minimap/code-minimap`
 let g:minimap_auto_start = 1
 let g:minimap_width = 20
 
