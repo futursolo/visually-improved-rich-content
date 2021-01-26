@@ -42,6 +42,7 @@ Plug 'Xuyuanp/nerdtree-git-plugin'
 Plug 'itchyny/lightline.vim'
 Plug 'Yggdroot/indentLine'
 Plug 'maximbaz/lightline-ale'
+Plug 'ctrlpvim/ctrlp.vim'
 
 " Source Control
 Plug 'airblade/vim-gitgutter'
@@ -66,27 +67,15 @@ Plug 'hashivim/vim-terraform'
 " Shortcuts
 Plug 'tpope/vim-eunuch'
 
+" Icons
+Plug 'ryanoasis/vim-devicons'
+
 call plug#end()
 
 " Install Plugins
 autocmd VimEnter * if exists("*plug#begin") && len(filter(values(g:plugs), '!isdirectory(v:val.dir)'))
   \| PlugInstall --sync | source $MYVIMRC
 \| endif
-
-" GVim / MacVim
-if has("gui_running")
-  set guifont=Monaco:h12
-  if has("gui_macvim")
-  " CtrlP OS-X Menu remapping
-    macmenu &File.New\ Tab key=<D-S-t>
-
-  endif
-
-  if has("autocmd")
-    " Automatically resize splits when resizing MacVim window
-    autocmd VimResized * wincmd =
-  endif
-endif
 
 " Global
 set nocompatible
@@ -97,8 +86,6 @@ endif
 
 set colorcolumn=80
 set number
-set ruler
-syntax enable
 
 if !isdirectory($HOME . '/.vim/_backup/')
   call mkdir($HOME . '/.vim/_backup/', 'p')
@@ -112,6 +99,17 @@ set directory^=~/.vim/_temp//
 
 " Saves when lost focus
 au FocusLost * silent! wall
+
+" MacVim / GVim
+if has("gui_running")
+  set guifont=Monaco\ Nerd\ Font:h12,Monaco:h12
+
+  " Automatically resize splits when resizing MacVim window
+  autocmd VimResized * wincmd =
+
+  " Show help in a new tab
+  cnoreabbrev <expr> h getcmdtype() == ":" && getcmdline() == 'h' ? 'tab help' : 'h'
+endif
 
 " Keymap
 " upper/lower word
@@ -138,6 +136,19 @@ if has("gui_macvim") && has("gui_running")
   imap <D-[> <Esc><<i
 endif
 
+" Don't show Insert / View / Normal anymore
+set noshowmode
+
+" Search Settings
+set hlsearch
+set incsearch
+set ignorecase
+set smartcase
+
+" Remember Last Cursor Position
+au BufReadPost * if &filetype !~ '^git\c' && line("'\"") > 0 && line("'\"") <= line("$")
+  \| exe "normal! g`\"" | endif
+
 " Status Line
 set laststatus=2  " always show the status bar
 
@@ -152,7 +163,39 @@ function g:VimRcGitBranch()
     return ""
   endif
 
-  return "[git: " . l:branch . "]"
+  if g:webdevicons_enable
+    return " " . l:branch
+  else
+    return "[git: " . l:branch . "]"
+  endif
+endfunction
+
+function g:VimRcFiletype()
+  if winwidth(0) > 70 && strlen(&filetype)
+    let l:filetype_icon = WebDevIconsGetFileTypeSymbol()
+
+    if strlen(l:filetype_icon)
+      return l:filetype_icon . &filetype
+    endif
+
+    return &filetype
+  endif
+
+  return ''
+endfunction
+
+function g:VimRcFileformat()
+  if winwidth(0) > 70 && strlen(&fileformat)
+    let l:fileformat_icon = WebDevIconsGetFileFormatSymbol()
+
+    if strlen(l:fileformat_icon)
+      return l:fileformat_icon . &fileformat
+    endif
+
+    return &fileformat
+  endif
+
+  return ''
 endfunction
 
 let g:lightline = {
@@ -172,7 +215,9 @@ let g:lightline = {
       \     ]
       \   },
       \   'component_function': {
-      \     'gitbranch': 'g:VimRcGitBranch'
+      \     'gitbranch': 'g:VimRcGitBranch',
+      \     'filetype': 'g:VimRcFiletype',
+      \     'fileformat': 'g:VimRcFileformat',
       \   },
       \ }
 
@@ -192,9 +237,6 @@ let g:lightline.component_type = {
       \   'linter_ok': 'right',
       \ }
 
-" Don't show Insert / View / Normal anymore
-set noshowmode
-
 function g:VimRcUpdateStatusLine()
   if exists("*lightline#init")
     call lightline#init()
@@ -202,16 +244,6 @@ function g:VimRcUpdateStatusLine()
     call lightline#update()
   endif
 endfunction
-
-" Search Settings
-set hlsearch
-set incsearch
-set ignorecase
-set smartcase
-
-" Remember Last Cursor Position
-au BufReadPost * if &filetype !~ '^git\c' && line("'\"") > 0 && line("'\"") <= line("$")
-  \| exe "normal! g`\"" | endif
 
 " Colour Scheme
 " Switch to Light Theme
@@ -226,41 +258,51 @@ function g:VimRcSwitchToLightScheme()
   set background=light
   let g:lightline.colorscheme='one'
   call g:VimRcUpdateStatusLine()
+
+  if has("gui_running") && has("gui_macvim")
+    set transparency=0
+  endif
 endfunction
 
 " Switch to Dark Theme
 function g:VimRcSwitchToDarkScheme()
-  colorscheme onehalfdark
+  try
+    colorscheme onehalfdark
+  catch /^Vim\%((\a\+)\)\=:E185/
+    " Color Scheme onehalfdark is not installed.
+    return
+  endtry
+
   set background=dark
   let g:lightline.colorscheme='onehalfdark'
   call g:VimRcUpdateStatusLine()
+
+  if has("gui_running") && has("gui_macvim")
+    set transparency=10
+  endif
 endfunction
 
-function g:VimRcDetectDarkModeCallback(channel, msg)
-  if a:msg =~ "on"
+function g:VimRcDetectDarkMode()
+  if v:os_appearance == 1
     if &background != 'dark'
       call g:VimRcSwitchToDarkScheme()
     endif
   elseif &background != 'light'
     call g:VimRcSwitchToLightScheme()
   endif
-endfunction
-
-" If system("dark-mode status") is used Vim may get sluggish / laggy.
-function g:VimRcDetectDarkMode(timer)
-  call job_start(["dark-mode", "status"], {'out_cb': 'g:VimRcDetectDarkModeCallback'})
+  redraw!  " Force Window Redraw when blurred.
 endfunction
 
 " Default is Light Theme
 call g:VimRcSwitchToLightScheme()
 
 " Dark Mode detection
-" To use this feature, you need to `brew install dark-mode`
-if executable("dark-mode")
-  " Checking every 0.5 seconds provides a relatively smooth transitioning
-  " experience between light and dark theme when system theme changes.
-  let s:dark_mode_timer = timer_start(500, 'g:VimRcDetectDarkMode', {'repeat': -1})
-  call g:VimRcDetectDarkMode(s:dark_mode_timer)
+if has("gui_running") && has("gui_macvim")
+  autocmd OSAppearanceChanged * call g:VimRcDetectDarkMode()
+  call g:VimRcDetectDarkMode()
+
+  " Set a transparent background
+  set blurradius=100
 endif
 
 " Spacing
@@ -295,6 +337,30 @@ let NERDTreeShowHidden = 1
 autocmd BufEnter * if tabpagenr('$') == 1 && winnr('$') == 1 && exists('b:NERDTree') && b:NERDTree.isTabTree() |
     \ quit | endif
 
+if has("gui_running")
+  " Mirrors in all tabs.
+  autocmd BufWinEnter * silent NERDTreeMirror
+
+  function g:VimRcNERDTreeCustomFileOpener(node)
+    let l:opener = g:NERDTreeOpener.New(a:node.path, { 'reuse': 'all', 'where': 'p' })
+
+    " Reuse current window if possible, else open in a new tab.
+    if !l:opener._isWindowUsable(winnr('#')) && l:opener._firstUsableWindow() ==# -1
+      call a:node.activate({ 'reuse': 'all', 'where': 't' })
+    else
+      call a:node.activate({ 'reuse': 'all', 'where': 'p' })
+    endif
+  endfunction
+
+  autocmd Filetype nerdtree call NERDTreeAddKeyMap({
+    \ 'key': '<CR>',
+    \ 'callback': 'g:VimRcNERDTreeCustomFileOpener',
+    \ 'quickhelpText': 'Opens a file',
+    \ 'scope': 'FileNode',
+    \ 'override': 1 })
+  autocmd Filetype nerdtree map <silent> <buffer> <2-LeftMouse> <CR>
+endif
+
 " Map Command-D to Toggle Between NerdTree and Center Buffer
 if has("gui_macvim") && has("gui_running")
   function g:VimRcToggleBufNerdTree()
@@ -315,6 +381,7 @@ endif
 let g:minimap_auto_start = 1
 let g:minimap_width = 20
 
+" Close when only NerdTree and minimap is open.
 function g:VimRcAutoExitMinimap()
   if exists("*minimap#vim#MinimapClose")
     if winnr("$") == 2 && g:NERDTree.IsOpen()
@@ -324,6 +391,14 @@ function g:VimRcAutoExitMinimap()
 endfunction
 
 autocmd BufEnter * call g:VimRcAutoExitMinimap()
+
+" DevIcons
+let g:webdevicons_enable_nerdtree = 0  " Too verbose for Nerd Tree
+
+" CtrlP
+if has("gui_macvim")
+  let g:ctrlp_map = '<D-p>'
+endif
 
 " ALE
 let g:ale_fixers = {
@@ -349,6 +424,7 @@ let g:rustfmt_autosave = 1  " Temporary Fix until rustfmt works with ALE again.
 let g:ale_rust_cargo_use_clippy = 1
 let g:ale_linters.rust = [ 'cargo', 'rls' ]
 let g:ale_fixers.rust = [ 'rustfmt' ]
+autocmd Filetype rust setlocal colorcolumn=120
 
 " CSS
 autocmd Filetype css setlocal tabstop=4 shiftwidth=4

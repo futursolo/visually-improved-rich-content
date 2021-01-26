@@ -19,7 +19,6 @@ make your own `vimrc`.
 
 ### Prerequisites (Optional)
 - [MacVim](https://macvim-dev.github.io/macvim/)
-- [dark-mode](https://github.com/sindresorhus/dark-mode)
 - Rust (cargo, rls, std-src, rustfmt)
 - Python (mypy, flake8, isort, black, autoimport)
 - Terraform (terraform fmt, tflint)
@@ -28,14 +27,17 @@ make your own `vimrc`.
 ```shell
 git clone https://github.com/futursolo/visually-improved-rich-content ~/.vim
 ln -s ~/.vim/vimrc ~/.vimrc
+ln -s ~/.vim/gvimrc ~/.gvimrc
 ```
 
 ### Features
 - Plugins via [vim-plug](https://github.com/junegunn/vim-plug)
 - Supported Languages: Python, Rust, Markdown, Terraform, VimScript, CSS
-- Automatically switches between Dark / Light Theme based on System Preference(macOS Only)
+- Automatically switches between Dark / Light Theme based on System Preference(MacVim Only)
 - Async Linting / Auto Completion / Auto Formatting via [ALE](https://github.com/dense-analysis/ale)
-- NerdTree + Git Support
+- NerdTree + CtrlP
+- Git Support
+- DevIcons
 
 ### Licence
 Copyright 2021 Kaede Hoshikawa
