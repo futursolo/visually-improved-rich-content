@@ -134,6 +134,28 @@ if has("gui_macvim") && has("gui_running")
 
   imap <D-]> <Esc>>>i
   imap <D-[> <Esc><<i
+
+  " Map Command-# to switch tabs
+  map  <D-0> 0gt
+  imap <D-0> <Esc>0gt
+  map  <D-1> 1gt
+  imap <D-1> <Esc>1gt
+  map  <D-2> 2gt
+  imap <D-2> <Esc>2gt
+  map  <D-3> 3gt
+  imap <D-3> <Esc>3gt
+  map  <D-4> 4gt
+  imap <D-4> <Esc>4gt
+  map  <D-5> 5gt
+  imap <D-5> <Esc>5gt
+  map  <D-6> 6gt
+  imap <D-6> <Esc>6gt
+  map  <D-7> 7gt
+  imap <D-7> <Esc>7gt
+  map  <D-8> 8gt
+  imap <D-8> <Esc>8gt
+  map  <D-9> 9gt
+  imap <D-9> <Esc>9gt
 endif
 
 " Don't show Insert / View / Normal anymore
@@ -244,6 +266,65 @@ function g:VimRcUpdateStatusLine()
     call lightline#update()
   endif
 endfunction
+
+" Gui Label
+if has("gui_running")
+  function g:VimRcGuiTabLabel()
+    if &filetype == 'nerdtree' || &filetype == 'minimap'
+      if exists('t:vimrc_gui_label')
+        return t:vimrc_gui_label
+      endif
+    endif
+
+    let bufnrlist = tabpagebuflist(v:lnum)
+
+    let modified = v:false
+    let bufname = "(Untitled)"
+
+    if bufname("%") != ""
+      let bufname = bufname("%")
+    elseif type(bufnrlist) == v:t_list
+      " Add '+' if one of the buffers in the tab page is modified
+      for bufnr in bufnrlist
+        if getbufvar(bufnr, "&modified")
+          let modified = v:true
+          break
+        endif
+      endfor
+
+      let listbufname = bufname(bufnrlist[tabpagewinnr(v:lnum) - 1])
+      if listbufname != ''
+        let bufname = listbufname
+      endif
+    endif
+
+    if !modified
+      let modified = getbufvar("%", "&modified")
+    endif
+
+    if modified
+      let label = '[+] '
+    else
+      let label = ''
+    endif
+
+    let label .= bufname
+
+    let t:vimrc_gui_label = label
+
+    return label
+  endfunction
+
+  function g:VimRcGuiTitleString()
+    return g:VimRcGuiTabLabel() . " - MacVim"
+  endfunction
+
+  set guitablabel=%{g:VimRcGuiTabLabel()}
+  set titlestring=%{g:VimRcGuiTitleString()}
+
+  autocmd BufEnter * call g:VimRcGuiTabLabel()
+  autocmd CursorMoved * call g:VimRcGuiTabLabel()
+endif
 
 " Colour Scheme
 " Switch to Light Theme
@@ -358,6 +439,8 @@ if has("gui_running")
     \ 'quickhelpText': 'Opens a file',
     \ 'scope': 'FileNode',
     \ 'override': 1 })
+
+  " This delegates all double click to <CR> so no need to rebind all of them.
   autocmd Filetype nerdtree map <silent> <buffer> <2-LeftMouse> <CR>
 endif
 
