@@ -323,6 +323,9 @@ if has("gui_running")
   set titlestring=%{g:VimRcGuiTitleString()}
 
   autocmd BufEnter * call g:VimRcGuiTabLabel()
+  " Call on cursor move to update the title
+  " Not very elegant but given there's no BufModify command
+  " This is the best solution.
   autocmd CursorMoved * call g:VimRcGuiTabLabel()
 endif
 
@@ -501,6 +504,7 @@ let g:jedi#completions_command = ""
 au FileType python setlocal tabstop=4 shiftwidth=4
 let g:ale_linters.python = [ 'flake8', 'mypy' ]
 let g:ale_fixers.python = ['black', 'isort', 'autoimport']
+let g:ale_python_mypy_options = ' --strict --ignore-missing-imports'
 
 " Rust
 let g:rustfmt_autosave = 1  " Temporary Fix until rustfmt works with ALE again.
