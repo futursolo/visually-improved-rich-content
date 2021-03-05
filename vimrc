@@ -166,6 +166,8 @@ set hlsearch
 set incsearch
 set ignorecase
 set smartcase
+" Turn off highlight when pressing ESC
+map <silent> <ESC> <ESC>:noh<CR>
 
 " Remember Last Cursor Position
 au BufReadPost * if &filetype !~ '^git\c' && line("'\"") > 0 && line("'\"") <= line("$")
@@ -432,7 +434,7 @@ if has("gui_running")
     if !l:opener._isWindowUsable(winnr('#')) && l:opener._firstUsableWindow() ==# -1
       call a:node.activate({ 'reuse': 'all', 'where': 't' })
     else
-      call a:node.activate({ 'reuse': 'all', 'where': 'p' })
+      call a:node.activate({ 'reuse': 'all', 'where': 'p', 'keepopen': 1 })
     endif
   endfunction
 
