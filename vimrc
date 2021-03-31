@@ -19,6 +19,9 @@ if empty(glob('~/.vim/autoload/plug.vim'))
     \ https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
 endif
 
+" Set auto completion before ALE is loaded
+let g:ale_completion_enabled = 1
+
 call plug#begin('~/.vim/plugged')
 " Colour Scheme
 Plug 'sonph/onehalf', {'rtp': 'vim/'}
@@ -345,9 +348,9 @@ function g:VimRcSwitchToLightScheme()
   let g:lightline.colorscheme='one'
   call g:VimRcUpdateStatusLine()
 
-  if has("gui_running") && has("gui_macvim")
-    set transparency=0
-  endif
+  "if has("gui_running") && has("gui_macvim")
+  "  set transparency=0
+  "endif
 endfunction
 
 " Switch to Dark Theme
@@ -363,9 +366,9 @@ function g:VimRcSwitchToDarkScheme()
   let g:lightline.colorscheme='onehalfdark'
   call g:VimRcUpdateStatusLine()
 
-  if has("gui_running") && has("gui_macvim")
-    set transparency=10
-  endif
+  "if has("gui_running") && has("gui_macvim")
+  "  set transparency=10
+  "endif
 endfunction
 
 function g:VimRcDetectDarkMode()
@@ -432,7 +435,7 @@ if has("gui_running")
 
     " Reuse current window if possible, else open in a new tab.
     if !l:opener._isWindowUsable(winnr('#')) && l:opener._firstUsableWindow() ==# -1
-      call a:node.activate({ 'reuse': 'all', 'where': 't' })
+      call a:node.activate({ 'reuse': 'all', 'where': 't', 'keepopen': 1})
     else
       call a:node.activate({ 'reuse': 'all', 'where': 'p', 'keepopen': 1 })
     endif
@@ -504,9 +507,9 @@ au FileType markdown setlocal wrap linebreak textwidth=72 nolist
 let g:jedi#force_py_version = 3
 let g:jedi#completions_command = ""
 au FileType python setlocal tabstop=4 shiftwidth=4
-let g:ale_linters.python = [ 'flake8', 'mypy' ]
-let g:ale_fixers.python = ['black', 'isort', 'autoimport']
-let g:ale_python_mypy_options = ' --strict --ignore-missing-imports'
+let g:ale_linters.python = [ 'flake8', 'mypy', 'pyls' ]
+let g:ale_fixers.python = [ 'black', 'isort', 'autoimport' ]
+let g:ale_python_mypy_options = ' --strict --implicit-reexport --ignore-missing-imports'
 
 " Rust
 let g:rustfmt_autosave = 1  " Temporary Fix until rustfmt works with ALE again.
