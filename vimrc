@@ -351,6 +351,7 @@ function g:VimRcSwitchToLightScheme()
   "if has("gui_running") && has("gui_macvim")
   "  set transparency=0
   "endif
+  redraw!  " Force Window Redraw when blurred.
 endfunction
 
 " Switch to Dark Theme
@@ -366,9 +367,11 @@ function g:VimRcSwitchToDarkScheme()
   let g:lightline.colorscheme='onehalfdark'
   call g:VimRcUpdateStatusLine()
 
-  "if has("gui_running") && has("gui_macvim")
-  "  set transparency=10
-  "endif
+  if has("gui_running") && has("gui_macvim")
+    set transparency=10
+  endif
+  "
+  redraw!  " Force Window Redraw when blurred.
 endfunction
 
 function g:VimRcDetectDarkMode()
@@ -379,7 +382,6 @@ function g:VimRcDetectDarkMode()
   elseif &background != 'light'
     call g:VimRcSwitchToLightScheme()
   endif
-  redraw!  " Force Window Redraw when blurred.
 endfunction
 
 " Default is Light Theme
@@ -510,6 +512,21 @@ au FileType python setlocal tabstop=4 shiftwidth=4
 let g:ale_linters.python = [ 'flake8', 'mypy', 'pyls' ]
 let g:ale_fixers.python = [ 'black', 'isort', 'autoimport' ]
 let g:ale_python_mypy_options = ' --strict --implicit-reexport --ignore-missing-imports'
+let g:ale_python_pyls_config = {
+\   'pyls': {
+\     'plugins': {
+\       'pycodestyle': {
+\         'enabled': v:false
+\       },
+\       'pyflakes': {
+\         'enabled': v:false
+\       },
+\       'autopep8': {
+\         'enabled': v:false
+\       }
+\     }
+\   },
+\}
 
 " Rust
 let g:rustfmt_autosave = 1  " Temporary Fix until rustfmt works with ALE again.
