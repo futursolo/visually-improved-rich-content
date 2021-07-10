@@ -67,6 +67,13 @@ Plug 'ap/vim-css-color'
 " Terraform
 Plug 'hashivim/vim-terraform'
 
+" JavaScript / TypeScript / React
+Plug 'leafgarland/typescript-vim'
+Plug 'peitalin/vim-jsx-typescript'
+
+" GraphQL
+Plug 'jparise/vim-graphql'
+
 " Shortcuts
 Plug 'tpope/vim-eunuch'
 
@@ -367,10 +374,9 @@ function g:VimRcSwitchToDarkScheme()
   let g:lightline.colorscheme='onehalfdark'
   call g:VimRcUpdateStatusLine()
 
-  if has("gui_running") && has("gui_macvim")
-    set transparency=10
-  endif
-  "
+  "if has("gui_running") && has("gui_macvim")
+  "  set transparency=10
+  "endif
   redraw!  " Force Window Redraw when blurred.
 endfunction
 
@@ -541,3 +547,13 @@ autocmd Filetype css setlocal tabstop=4 shiftwidth=4
 " Terraform
 let g:terraform_align = 1
 let g:terraform_fmt_on_save = 1
+
+" JavaScript / TypeScript / React
+let g:ale_fixers.typescriptreact = [ 'prettier', 'eslint' ]
+let g:ale_fixers.typescript = [ 'prettier', 'eslint' ]
+let g:ale_fixers.javascriptreact = [ 'prettier', 'eslint' ]
+let g:ale_fixers.javascript = [ 'prettier', 'eslint' ]
+let g:ale_javascript_eslint_suppress_eslintignore = 1
+
+" GraphQL
+let g:ale_fixers.graphql = [ 'prettier' ]
