@@ -59,7 +59,7 @@ Plug 'rust-lang/rust.vim'
 Plug 'cespare/vim-toml'
 
 " Python
-Plug 'davidhalter/jedi-vim'
+"Plug 'davidhalter/jedi-vim'
 
 " Stylesheets
 Plug 'ap/vim-css-color'
@@ -433,6 +433,9 @@ let NERDTreeShowHidden = 1
 " Exit Vim if NERDTree is the only window left.
 autocmd BufEnter * if tabpagenr('$') == 1 && winnr('$') == 1 && exists('b:NERDTree') && b:NERDTree.isTabTree() |
     \ quit | endif
+
+" NerdCommenter
+let g:NERDSpaceDelims = 1
 
 if has("gui_running")
   " Mirrors in all tabs.
