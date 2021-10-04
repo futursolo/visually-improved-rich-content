@@ -540,8 +540,13 @@ let g:ale_python_pyls_config = {
 " Rust
 let g:rustfmt_autosave = 1  " Temporary Fix until rustfmt works with ALE again.
 let g:ale_rust_cargo_use_clippy = 1
-let g:ale_linters.rust = [ 'cargo', 'rls' ]
+let g:ale_linters.rust = [ 'analyzer', 'cargo' ]
 let g:ale_fixers.rust = [ 'rustfmt' ]
+let g:ale_rust_analyzer_config = {
+\   'cargo': {
+\     'allFeatures': v:true
+\   }
+\}
 autocmd Filetype rust setlocal colorcolumn=120
 
 " CSS
