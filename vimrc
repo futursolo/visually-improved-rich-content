@@ -545,6 +545,9 @@ let g:ale_fixers.rust = [ 'rustfmt' ]
 let g:ale_rust_analyzer_config = {
 \   'cargo': {
 \     'allFeatures': v:true
+\   },
+\   'diagnostics': {
+\     'disabled': [ 'unresolved-import', 'unresolved-macro-call' ]
 \   }
 \}
 autocmd Filetype rust setlocal colorcolumn=120
