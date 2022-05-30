@@ -538,10 +538,16 @@ let g:ale_python_pyls_config = {
 \}
 
 " Rust
+let g:rustfmt_command = 'rustfmt +nightly'
+"let g:rustfmt_command = '~/.rustup/toolchains/nightly-aarch64-apple-darwin/bin/rustfmt'
+let g:rustfmt_options = '--unstable-features '
 let g:rustfmt_autosave = 1  " Temporary Fix until rustfmt works with ALE again.
 let g:ale_rust_cargo_use_clippy = 1
 let g:ale_linters.rust = [ 'analyzer', 'cargo' ]
-let g:ale_fixers.rust = [ 'rustfmt' ]
+"let g:ale_fixers.rust = [ 'rustfmt' ]
+let g:ale_fixers.rust = []
+"let g:ale_rust_rustfmt_executable = '~/.cargo/bin/rustfmt'
+"let g:ale_rust_rustfmt_options = '+nightly --edition=2021 --unstable-features'
 let g:ale_rust_analyzer_config = {
 \   'cargo': {
 \     'allFeatures': v:true
@@ -564,6 +570,11 @@ let g:ale_fixers.typescriptreact = [ 'prettier', 'eslint' ]
 let g:ale_fixers.typescript = [ 'prettier', 'eslint' ]
 let g:ale_fixers.javascriptreact = [ 'prettier', 'eslint' ]
 let g:ale_fixers.javascript = [ 'prettier', 'eslint' ]
+
+let g:ale_linters.typescriptreact = [ 'eslint', 'tsserver' ]
+let g:ale_linters.typescript = [ 'eslint', 'tsserver' ]
+let g:ale_linters.javascriptreact = [ 'eslint', 'tsserver' ]
+let g:ale_linters.javascript = [ 'eslint', 'tsserver' ]
 let g:ale_javascript_eslint_suppress_eslintignore = 1
 
 " GraphQL
