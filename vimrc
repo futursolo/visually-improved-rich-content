@@ -183,6 +183,9 @@ map <silent> <ESC> <ESC>:noh<CR>
 au BufReadPost * if &filetype !~ '^git\c' && line("'\"") > 0 && line("'\"") <= line("$")
   \| exe "normal! g`\"" | endif
 
+" Do not hide quotes
+let g:indentLine_setConceal = 0
+
 " Status Line
 set laststatus=2  " always show the status bar
 
