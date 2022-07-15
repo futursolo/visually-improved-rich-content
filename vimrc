@@ -31,11 +31,11 @@ Plug 'dense-analysis/ale'
 Plug 'bronson/vim-trailing-whitespace'
 
 " Auto Complete / Code Snippets
-Plug 'SirVer/ultisnips'
-Plug 'honza/vim-snippets'
+"Plug 'SirVer/ultisnips'
+"Plug 'honza/vim-snippets'
 Plug 'preservim/nerdcommenter'
 Plug 'tpope/vim-endwise'
-Plug 'ervandew/supertab'
+"Plug 'ervandew/supertab'
 Plug 'tpope/vim-surround'
 
 " Code Visibility / Navigation
@@ -512,6 +512,8 @@ let g:ale_fixers = {
 
 let g:ale_linters = {}
 let g:ale_fix_on_save = 1
+
+let g:ale_completion_enabled = 1
 
 " Markdown
 au BufRead,BufNewFile *.{md,markdown,mdown,mkd,mkdn,txt} setf markdown
